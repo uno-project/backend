@@ -6,7 +6,7 @@ from .cards import JokerCard, JokerPlusFourCard, BlankJokerCard, JokerChangeHand
 COLORS = ("BLUE", "GREEN", "YELLOW", "RED")
 
 # cards by color
-NUMBER_RANGE = range(1,10)
+NUMBER_RANGE = range(1, 10)
 PLUS_TWO = range(2)
 INVERT = range(2)
 JUMP = range(2)
@@ -21,7 +21,6 @@ class Deck:
     """
     Represents the deck
     """
-
     def __init__(self):
         self.cards = []
         self.__generate_deck()
