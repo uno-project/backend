@@ -1,4 +1,4 @@
-![](https://github.com/uno-project/backend/workflows/.github/workflows/main.yml/badge.svg)
+![Unittests](https://github.com/uno-project/backend/workflows/Unittests/badge.svg?branch=master)
 # Uno backend
 
 
