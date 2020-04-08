@@ -1,4 +1,5 @@
-![Unittests](https://github.com/uno-project/backend/workflows/Unittests/badge.svg?branch=master)
+![Tests](https://github.com/uno-project/backend/workflows/Tests/badge.svg)
+
 # Uno backend
 
 
