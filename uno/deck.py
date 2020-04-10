@@ -66,3 +66,6 @@ class Deck:
 
     def shuffle(self):
         shuffle(self.cards)
+
+    def pickCard(self):
+        return self.cards.pop()
