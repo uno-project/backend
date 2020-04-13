@@ -1,6 +1,6 @@
 from random import shuffle
 from .cards import NumberedCard, PlusTwoCard, InvertedCard, JumpCard
-from .cards import JokerCard, JokerPlusFourCard, BlankJokerCard, JokerChangeHands
+from .cards import JokerCard, JokerPlusFourCard
 
 # colors
 COLORS = ("BLUE", "GREEN", "YELLOW", "RED")
@@ -14,7 +14,8 @@ JUMP = range(2)
 # no color
 JOKER = range(4)
 JOKER_PLUS_FOUR = range(4)
-BLANK_JOKER = range(3)
+
+TOTAL_CARDS = 108
 
 
 class Deck:
@@ -57,12 +58,6 @@ class Deck:
 
         for i in JOKER_PLUS_FOUR:
             self.cards.append(JokerPlusFourCard())
-
-        for i in BLANK_JOKER:
-            self.cards.append(BlankJokerCard())
-
-        # only one change cards
-        self.cards.append(JokerChangeHands())
 
     def shuffle(self):
         shuffle(self.cards)

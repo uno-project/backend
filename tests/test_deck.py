@@ -1,6 +1,6 @@
 from uno.deck import Deck
 from uno.cards import NumberedCard, PlusTwoCard, InvertedCard, JumpCard
-from uno.cards import JokerCard, JokerPlusFourCard, BlankJokerCard, JokerChangeHands
+from uno.cards import JokerCard, JokerPlusFourCard
 
 import pytest
 
@@ -8,8 +8,8 @@ import pytest
 def test_deck_generation():
     deck = Deck()
 
-    # deck should have 112 cards
-    assert (len(deck.cards) == 112)
+    # deck should have 108 cards
+    assert (len(deck.cards) == 108)
 
     instancesNCounters = {
         NumberedCard: 76,
@@ -17,9 +17,7 @@ def test_deck_generation():
         InvertedCard: 8,
         JumpCard: 8,
         JokerCard: 4,
-        JokerPlusFourCard: 4,
-        BlankJokerCard: 3,
-        JokerChangeHands: 1
+        JokerPlusFourCard: 4
     }
 
     for card in deck.cards:
