@@ -1,7 +1,8 @@
 HASH := $(shell git rev-parse --short HEAD)
-CONTAINER := gcr.io/booming-cairn-261420/app
-default: test
+CONTAINER := uno/backend
 SERVICE_NAME=uno
+
+default: test
 
 test:
 	python3 -m pytest
@@ -17,11 +18,6 @@ clean:
 
 build-image:
 	docker build . -t $(CONTAINER):$(HASH)
-
-push-image:
-	docker tag $(CONTAINER):$(HASH) $(CONTAINER):latest
-	docker push $(CONTAINER):latest
-	gcloud run deploy $(SERVICE_NAME) --image $(CONTAINER):latest --region us-central1 --platform 'managed' --allow-unauthenticated
 
 push-keroku:
 	git push heroku master
