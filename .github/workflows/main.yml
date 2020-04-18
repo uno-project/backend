@@ -28,6 +28,3 @@ jobs:
     - name: Run coverage
       uses: codecov/codecov-action@v1
 
-    - name: Push to heroku
-      run: |
-        make push-heroku
