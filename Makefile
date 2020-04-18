@@ -22,3 +22,7 @@ push-image:
 	docker tag $(CONTAINER):$(HASH) $(CONTAINER):latest
 	docker push $(CONTAINER):latest
 	gcloud run deploy $(SERVICE_NAME) --image $(CONTAINER):latest --region us-central1 --platform 'managed' --allow-unauthenticated
+
+push-keroku:
+	git remote add heroku https://git.heroku.com/uno-dos-tres.git
+	git push heroku master
