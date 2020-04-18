@@ -18,5 +18,5 @@ USER myuser
 
 # Run the app.  CMD is required to run on Heroku
 EXPOSE 8080
-CMD gunicorn --bind 0.0.0.0:8080 app:app
+CMD gunicorn --bind 0.0.0.0:8080 'rest:create_app()'
 

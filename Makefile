@@ -16,6 +16,9 @@ clean:
 	rm -rf build htmlcov
 	find . -name __pycache__ | xargs rm -rf
 
+api:
+	gunicorn --bind 0.0.0.0:8080 'rest:create_app()'
+
 build-image:
 	docker build . -t $(CONTAINER):$(HASH)
 
