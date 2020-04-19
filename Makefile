@@ -4,11 +4,8 @@ SERVICE_NAME=uno
 
 default: test
 
-test-unittest:
-	python3 -m pytest tests/unittest
-
-test-rest:
-	python3 -m pytest tests/rest
+test:
+	python3 -m pytest
 
 lint:
 	yapf -i -r uno
