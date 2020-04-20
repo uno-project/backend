@@ -5,8 +5,8 @@ import sys
 from flask import Flask, current_app, request, g, jsonify, make_response
 from flask_restful import Api
 
-from .game import GameApi
-from .player import PlayerApi
+from .game_api import GameApi
+from .player_api import PlayerApi
 
 # setup logging and start app
 
