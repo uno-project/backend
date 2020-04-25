@@ -12,7 +12,7 @@ class PlayerApi(Resource):
 
         # return player info
         player_info = {"name": current_app.config.players[playerId].name,
-                       "cards": current_app.config.players[playerId].cards}
+                       "cards": [c.reference for c in current_app.config.players[playerId].cards]}
 
         return make_response(jsonify(player_info))
 

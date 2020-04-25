@@ -1,5 +1,6 @@
 from uuid import uuid4
 
+
 class Card:
     """
     Represents the card in the game
@@ -7,6 +8,12 @@ class Card:
     def __init__(self, color=None):
         self.color = color
         self.id = uuid4().hex
+        self.reference = {
+            "id": self.id,
+            "card": self.__class__.__name__,
+            "color": self.color,
+            "number": getattr(self, "number", False)
+        }
 
     def actions(self, lastCard, indexPlayer, players, deck):
         raise NotImplementedError()

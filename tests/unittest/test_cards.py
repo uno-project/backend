@@ -54,11 +54,16 @@ def test_inverted_actions():
     card1 = InvertedCard(color="BLUE")
     card2 = InvertedCard(color="BLUE")
     card3 = InvertedCard(color="RED")
+    card4 = NumberedCard(color="BLUE", number="2")
 
     assert card2.actions(card1, 0, players, Deck()) == 1
     assert players == [player2, player1]
     assert card3.actions(card1, 1, players, Deck()) == 0
     assert players == [player1, player2]
+
+    with pytest.raises(Exception):
+        card3.actions(card4, 1, players, Deck())
+
 
 
 def test_joker_actions():

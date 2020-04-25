@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from rest import create_app
+import logging
 
 @pytest.fixture()
 def server():
@@ -12,31 +13,29 @@ def server():
 
     yield server
 
+
 def test_game_index(server):
     req = server.get("/game/AAAA")
 
     # GET on / is not implemented
     assert req.status_code == 404
 
-def test_create_game(server):
 
-    # add players
-    player1Id = server.post("/player", json={"name": "player1"}).json["playerId"]
-    player2Id = server.post("/player", json={"name": "player2"}).json["playerId"]
+def test_players_cards(server):
+    gameId = create_game(server)
+    players = server.get(f"/game/{gameId}").json['players']
 
-    req = server.post(f"/game", json={"players": [player1Id, player2Id]})
-
-    # assert game creation
-    assert req.status_code == 200
-    assert "gameId" in req.json
-    req = server.get(f"/game/{req.json['gameId']}")
-    assert player1Id in req.json["players"]
-    assert player2Id in req.json["players"]
+    for playerId in players:
+        req = server.get(f"/player/{playerId}")
+        assert req.status_code == 200
+        assert len(req.json["cards"]) == 5
 
 def test_create_game_invalid_players(server):
 
     # add players
-    player1Id = server.post("/player", json={"name": "player1"}).json["playerId"]
+    player1Id = server.post("/player", json={
+        "name": "player1"
+    }).json["playerId"]
 
     req = server.post(f"/game", json={"players": [player1Id, "INVALID_ID"]})
 
@@ -44,3 +43,63 @@ def test_create_game_invalid_players(server):
     assert req.status_code == 404
     assert req.json["message"] == "Player INVALID_ID not found"
 
+
+def test_play_invalid_gameId(server):
+    gameId = create_game(server)
+
+    # play with invalid pla
+    req = server.put(f"/game/INVALID_ID",
+                     json={
+                         "playerId": "INVALID_ID",
+                         "cardId": "INVALID_ID"
+                     })
+
+    assert req.status_code == 404
+
+
+def test_play_invalid_player_and_card(server):
+    gameId = create_game(server)
+
+    # play with invalid pla
+    req = server.put(f"/game/{gameId}",
+                     json={
+                         "playerId": "INVALID_ID",
+                         "cardId": "INVALID_ID"
+                     })
+    assert req.status_code == 400
+
+def test_play_valid_player_and_card(server):
+    gameId = create_game(server)
+
+
+    # get game info
+    #game = 
+
+    # play with invalid pla
+    req = server.put(f"/game/{gameId}",
+                     json={
+                         "playerId": "INVALID_ID",
+                         "cardId": "INVALID_ID"
+                     })
+    assert req.status_code == 400
+
+
+def create_game(server):
+    # add players
+    player1Id = server.post("/player", json={
+        "name": "player1"
+    }).json["playerId"]
+    player2Id = server.post("/player", json={
+        "name": "player2"
+    }).json["playerId"]
+
+    # created succesful
+    req = server.post(f"/game", json={"players": [player1Id, player2Id]})
+    assert req.status_code == 200
+
+    # get playersId and assert
+    gameId = req.json["gameId"]
+    req = server.get(f"/game/{gameId}")
+    assert player1Id in req.json["players"]
+    assert player2Id in req.json["players"]
+    return gameId

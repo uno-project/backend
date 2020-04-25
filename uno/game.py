@@ -52,9 +52,7 @@ class Game:
         # uno flag not raised: punish
         if len(playerToPlay.cards) == 2 and unoFlag == False:
             playerToPlay.playCard(cardId)
-            logging.info(
-                f"Player {playerToPlay.id} forgot to ask uno"
-            )
+            logging.info(f"Player {playerToPlay.id} forgot to ask uno")
             for i in range(2):
                 playerToPlay.addCard(self.deck.pickCard())
             return self.__nextPlayer()
