@@ -6,7 +6,12 @@ from uno.game import Game
 
 
 class GameApi(Resource):
+
+
     def get(self, gameId):
+        """
+        Returns game information
+        """
         if gameId not in current_app.config.games:
             return make_response(jsonify(message="Not found"), 404)
 
@@ -17,6 +22,10 @@ class GameApi(Resource):
         return make_response(jsonify(game_info))
 
     def post(self):
+        """
+        Creates a game
+        """
+        # parse request
         reqparse = RequestParser()
         reqparse.add_argument('players',
                               type=list,
@@ -36,5 +45,40 @@ class GameApi(Resource):
         current_app.config.games[game.id] = game
         return jsonify({"gameId": game.id})
 
+    def put(self, gameId):
+        """
+        Play a card
+        """
+        # parse request
+        reqparse = RequestParser()
+        reqparse.add_argument('playerId',
+                              type=str,
+                              location='json',
+                              required="True",
+                              help="Player Id")
+        reqparse.add_argument('cardId',
+                              type=str,
+                              location='json',
+                              required="True",
+                              help="Player Id")
+        reqparse.add_argument('unoFlag',
+                              type=bool,
+                              location='json',
+                              required="True",
+                              help="Uno flag")
 
+        args = reqparse.parse_args()
 
+        # search game
+        if gameId not in current_app.config.games:
+            return make_response(jsonify(message="Not found"), 404)
+        game = current_app.config.games[gameId]
+
+        # try to play card
+        try:
+            gameObj.register_play(args.playerId,
+                                  args.cardId,
+                                  args.unoFlag)
+        except Exception as e:
+            return make_response(jsonify(message=f"Cannot make play: {e}"), 400)
+        return jsonify(message="success")

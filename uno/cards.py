@@ -1,10 +1,12 @@
+from uuid import uuid4
+
 class Card:
     """
     Represents the card in the game
     """
-    def __init__(self, color=None, number=None):
+    def __init__(self, color=None):
         self.color = color
-        self.number = number
+        self.id = uuid4().hex
 
     def actions(self, lastCard, indexPlayer, players, deck):
         raise NotImplementedError()
@@ -12,8 +14,8 @@ class Card:
 
 class NumberedCard(Card):
     def __init__(self, color, number):
-        self.color = color
         self.number = number
+        Card.__init__(self, color)
 
     def actions(self, lastCard, indexPlayer, players, deck):
         # same color as last card: success
@@ -26,7 +28,7 @@ class NumberedCard(Card):
 
 class PlusTwoCard(Card):
     def __init__(self, color):
-        self.color = color
+        Card.__init__(self, color)
 
     def actions(self, lastCard, indexPlayer, players, deck):
 
@@ -42,7 +44,7 @@ class PlusTwoCard(Card):
 
 class InvertedCard(Card):
     def __init__(self, color):
-        self.color = color
+        Card.__init__(self, color)
 
     def actions(self, lastCard, indexPlayer, players, deck):
 
@@ -64,7 +66,7 @@ class InvertedCard(Card):
 
 class JumpCard(Card):
     def __init__(self, color):
-        self.color = color
+        Card.__init__(self, color)
 
     def actions(self, lastCard, indexPlayer, players, deck):
 
@@ -81,8 +83,8 @@ class JumpCard(Card):
 
 
 class JokerCard(Card):
-    def __init__(self):
-        self.color = False
+    def __init__(self, color=None):
+        Card.__init__(self, False)
 
     def setColor(self, color: str):
         self.color = color
@@ -92,8 +94,8 @@ class JokerCard(Card):
 
 
 class JokerPlusFourCard(Card):
-    def __init__(self):
-        pass
+    def __init__(self, color=None):
+        Card.__init__(self, False)
 
     def setColor(self, color: str):
         self.color = color

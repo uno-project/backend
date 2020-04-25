@@ -8,8 +8,6 @@ from flask_restful import Api
 from .game_api import GameApi
 from .player_api import PlayerApi
 
-# setup logging and start app
-
 def create_app():
     # start config
     app = Flask(__name__)

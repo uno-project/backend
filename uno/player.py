@@ -14,8 +14,16 @@ class Player:
     def addCard(self, card: Card):
         self.cards.append(card)
 
-    def playCard(self, card: Card):
+    def playCard(self, cardId: str):
+        # search card
+        for index in range(len(self.cards)):
+            if self.cards[index].id == cardId:
+                break
+        else:
+            raise Exception(f"Card {cardId} not found")
+
+        # return card
         try:
-            return self.cards.remove(card)
+            return self.cards.pop(index)
         except Exception as e:
             logging.error(f"{card} not present")

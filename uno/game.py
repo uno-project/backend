@@ -29,36 +29,45 @@ class Game:
             for player in self.players:
                 player.addCard(self.deck.pickCard())
 
-    def register_play(self, playerId: str, card: Card, unoFlag=False):
+    def register_play(self, playerId: str, cardId: str, unoFlag=False):
 
         # get last player
         lastCard = Card()
         if len(self.__play_history) > 0:
             lastPlay = self.__play_history[-1]["card"]
 
+        # player is not part of the game: error
+        if playerId not in [p.id for p in self.players]:
+            raise Exception(f"Player {playerId} does not belong to this game")
+
+        # player to play
+        playerToPlay = self.players[self.playerToPlay]
+
         # not players turn: raise error
-        if playerId != self.players[self.playerToPlay].id:
+        if playerId != playerToPlay.id:
             raise Exception(
-                f"Player {playerId} should not play now. It's {self.players[self.playerToPlay].id}"
+                f"Player {playerId} should not play now. It's {playerToPlay.id}"
             )
 
         # uno flag not raised: punish
-        if len(self.players[
-                self.playerToPlay].cards) == 1 and unoFlag == False:
+        if len(playerToPlay.cards) == 2 and unoFlag == False:
+            playerToPlay.playCard(cardId)
             logging.info(
-                f"Player {self.players[self.playerToPlay].id} forgot to ask uno"
+                f"Player {playerToPlay.id} forgot to ask uno"
             )
             for i in range(2):
-                self.players[self.playerToPlay].addCard(self.deck.pickCard())
+                playerToPlay.addCard(self.deck.pickCard())
             return self.__nextPlayer()
 
         # run actions from actual card based on last card
         try:
+            # remove card from player
+            card = playerToPlay.playCard(cardId)
             self.playerToPlay = card.actions(lastCard, self.playerToPlay,
                                              self.players, self.deck)
 
         except Exception as e:
-            raise NotImplementedError(f"ARRUMA AQUI CARAIO: {e}")
+            raise Exception(f"Error while playing card: {e}")
 
         # add history and run action
         self.__play_history.append({"player": playerId, "card": card})

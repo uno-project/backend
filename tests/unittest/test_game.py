@@ -8,13 +8,9 @@ DECK_SIZE = 108
 STARTING_CARDS = 5
 
 game = None
-player1 = None
-player2 = None
 
 
 def test_game_initial():
-    global player1
-    global player2
     player1 = Player("player1")
     player2 = Player("player2")
 
@@ -32,50 +28,54 @@ def test_game_initial():
 
 
 def test_play_first_card():
-    global player1
-    global player2
     global game
+    player1 = game.players[0]
 
     # pick a card and assert
-    player1.playCard(player1.cards[0])
+    player1.playCard(player1.cards[0].id)
     assert len(player1.cards) == 4
 
     # player1 play random card
     blue = NumberedCard(color="BLUE", number="1")
-    assert game.register_play(player1.id, blue)
+    player1.addCard(blue)
+    assert game.register_play(player1.id, blue.id)
 
 
 def test_play_wrong_player():
-    global player1
-    global player2
     global game
+    player1 = game.players[0]
 
-    # try to play with
+    # add card to player
+    player1.playCard(player1.cards[0].id)
     blue = NumberedCard(color="BLUE", number="1")
+    player1.addCard(blue)
+
+    # play card
     with pytest.raises(Exception):
-        game.register_play(player1.id, blue)
+        game.register_play(player1.id, blue.id)
     assert len(game._Game__play_history) == 1
     assert game.playerToPlay == 1
 
 
 def test_play_player2():
-    global player1
-    global player2
     global game
+    player2 = game.players[1]
 
+    player2.playCard(player2.cards[0].id)
     blue = NumberedCard(color="BLUE", number="1")
-    assert game.register_play(player2.id, blue)
+    player2.addCard(blue)
+    assert game.register_play(player2.id, blue.id)
 
 
 def test_play_player1_forget_uno():
-    global player1
-    global player2
     global game
+    player1 = game.players[0]
 
     blue = NumberedCard(color="BLUE", number="1")
     player1.cards = player1.cards[:1]
+    player1.addCard(blue)
 
-    game.register_play(player1.id, blue)
+    game.register_play(player1.id, blue.id)
 
     # check penalty
     assert len(player1.cards) == 3
@@ -83,28 +83,25 @@ def test_play_player1_forget_uno():
 
 
 def test_play_player2_remember_uno():
-    global player1
-    global player2
     global game
+    player2 = game.players[1]
 
     blue = NumberedCard(color="BLUE", number="1")
     player2.cards = player2.cards[:1]
+    player2.addCard(blue)
 
-    assert game.register_play(player2.id, blue, unoFlag=True)
+    assert game.register_play(player2.id, blue.id, unoFlag=True)
 
 
 def test_play_player1_winner():
-    global player1
-    global player2
     global game
+    player1 = game.players[0]
 
     blue = NumberedCard(color="BLUE", number="1")
-    player1.cards = []
-
-    assert not isinstance(player1.playCard(blue), Card)
+    player1.cards = [blue]
 
     with pytest.raises(Exception):
-        game.register_play(player1.id, blue)
+        game.register_play(player1.id, blue.id)
 
     # check penalty
     assert len(player1.cards) == 0
