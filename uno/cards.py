@@ -1,18 +1,19 @@
 from uuid import uuid4
-
+from uno.exceptions import UnoRuleException
 
 class Card:
     """
     Represents the card in the game
     """
-    def __init__(self, color=None):
+    def __init__(self, color=None, number=False):
         self.color = color
         self.id = uuid4().hex
+        self.number = number
         self.reference = {
             "id": self.id,
             "card": self.__class__.__name__,
             "color": self.color,
-            "number": getattr(self, "number", False)
+            "number": self.number
         }
 
     def actions(self, lastCard, indexPlayer, players, deck):
@@ -21,26 +22,25 @@ class Card:
 
 class NumberedCard(Card):
     def __init__(self, color, number):
-        self.number = number
-        Card.__init__(self, color)
+        Card.__init__(self, color, number)
 
     def actions(self, lastCard, indexPlayer, players, deck):
         # same color as last card: success
         if lastCard.color not in [self.color, None
                                   ] and lastCard.number != self.number:
-            raise Exception("Card must be same color or number")
+            raise UnoRuleException("Card must be same color or number")
 
         return indexPlayer
 
 
 class PlusTwoCard(Card):
-    def __init__(self, color):
+    def __init__(self, color, number=False):
         Card.__init__(self, color)
 
     def actions(self, lastCard, indexPlayer, players, deck):
 
         if lastCard.color not in [self.color, None]:
-            raise Exception("Not same color")
+            raise UnoRuleException("Not same color")
 
         # make next player buy two cards
         for i in range(2):
@@ -50,14 +50,14 @@ class PlusTwoCard(Card):
 
 
 class InvertedCard(Card):
-    def __init__(self, color):
+    def __init__(self, color, number=False):
         Card.__init__(self, color)
 
     def actions(self, lastCard, indexPlayer, players, deck):
 
         if lastCard.color not in [self.color, None
                                   ] and not isinstance(lastCard, InvertedCard):
-            raise Exception("Not same color or card type")
+            raise UnoRuleException("Not same color or card type")
 
         # reverse list and set correct index
         playerId = players[indexPlayer].id
@@ -72,13 +72,13 @@ class InvertedCard(Card):
 
 
 class JumpCard(Card):
-    def __init__(self, color):
+    def __init__(self, color, number=False):
         Card.__init__(self, color)
 
     def actions(self, lastCard, indexPlayer, players, deck):
 
         if lastCard.color not in [self.color, None]:
-            raise Exception("Not same color")
+            raise UnoRuleException("Not same color")
 
         # jump player
         if indexPlayer == len(players) - 1:
@@ -90,7 +90,7 @@ class JumpCard(Card):
 
 
 class JokerCard(Card):
-    def __init__(self, color=None):
+    def __init__(self, color=None, number=False):
         Card.__init__(self, False)
 
     def setColor(self, color: str):
@@ -101,7 +101,7 @@ class JokerCard(Card):
 
 
 class JokerPlusFourCard(Card):
-    def __init__(self, color=None):
+    def __init__(self, color=None, number=False):
         Card.__init__(self, False)
 
     def setColor(self, color: str):

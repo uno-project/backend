@@ -3,7 +3,7 @@ from typing import Dict, List, Tuple
 from .player import Player
 from .deck import Deck
 from .cards import Card
-
+from .exceptions import UnoRuleException, UnoWinnerException
 import logging
 
 MINIMUM_PLAYERS = 2
@@ -14,7 +14,7 @@ START_CARDS_HAND = 5
 class Game:
     def __init__(self, players: List[Player]):
         if len(players) < MINIMUM_PLAYERS or len(players) > MAXIMUM_PLAYERS:
-            raise Exception(f"Game needs at least two players and maximum ten")
+            raise UnoRuleException(f"Game needs at least two players and maximum ten")
 
         logging.getLogger()
         self.id = uuid4().hex
@@ -38,14 +38,14 @@ class Game:
 
         # player is not part of the game: error
         if playerId not in [p.id for p in self.players]:
-            raise Exception(f"Player {playerId} does not belong to this game")
+            raise UnoRuleException(f"Player {playerId} does not belong to this game")
 
         # player to play
         playerToPlay = self.players[self.playerToPlay]
 
         # not players turn: raise error
         if playerId != playerToPlay.id:
-            raise Exception(
+            raise UnoRuleException(
                 f"Player {playerId} should not play now. It's {playerToPlay.id}"
             )
 
@@ -65,14 +65,14 @@ class Game:
                                              self.players, self.deck)
 
         except Exception as e:
-            raise Exception(f"Error while playing card: {e}")
+            raise UnoRuleException(f"Error while playing card: {e}")
 
         # add history and run action
         self.__play_history.append({"player": playerId, "card": card})
 
         # player played last card: won
         if len(self.players[self.playerToPlay].cards) == 0:
-            raise Exception(
+            raise UnoWinnerException(
                 f"Player {self.players[self.playerToPlay].id} is the winner")
 
         # next player

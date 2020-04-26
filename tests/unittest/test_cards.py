@@ -1,3 +1,4 @@
+from uno.exceptions import UnoRuleException
 from uno.cards import NumberedCard, PlusTwoCard, InvertedCard, JumpCard
 from uno.cards import Card, JokerCard, JokerPlusFourCard
 from uno.player import Player
@@ -26,7 +27,7 @@ def test_numbered_actions():
     assert card3.actions(card2, 1, players, Deck()) == 1
 
     # negative case
-    with pytest.raises(Exception):
+    with pytest.raises(UnoRuleException):
         card3.actions(card1, 1, players, Deck())
 
 
@@ -42,7 +43,7 @@ def test_plustwo_actions():
     assert card2.actions(card1, 0, players, Deck()) == 0
     assert len(player2.cards) == 2
 
-    with pytest.raises(Exception):
+    with pytest.raises(UnoRuleException):
         card3.actions(card1, 1, players, Deck())
 
 
@@ -61,7 +62,7 @@ def test_inverted_actions():
     assert card3.actions(card1, 1, players, Deck()) == 0
     assert players == [player1, player2]
 
-    with pytest.raises(Exception):
+    with pytest.raises(UnoRuleException):
         card3.actions(card4, 1, players, Deck())
 
 
@@ -79,7 +80,7 @@ def test_joker_actions():
     assert card2.actions(card1, 0, players, Deck()) == 0
     assert card3.actions(card2, 0, players, Deck()) == 0
 
-    with pytest.raises(Exception):
+    with pytest.raises(UnoRuleException):
         card3.actions(card1, 1, players, Deck())
 
 
@@ -95,7 +96,7 @@ def test_jump_actions():
     assert card3.actions(card1, 0, players, Deck()) == 1
     assert card3.actions(card1, 1, players, Deck()) == 0
 
-    with pytest.raises(Exception):
+    with pytest.raises(UnoRuleException):
         card3.actions(card2, 1, players, Deck())
 
 
@@ -113,7 +114,7 @@ def test_jokerplusfour_actions():
     assert card2.actions(card1, 0, players, Deck()) == 0
     assert len(player2.cards) == 4
 
-    with pytest.raises(Exception):
+    with pytest.raises(UnoRuleException):
         card3.actions(card1, 1, players, Deck())
 
     assert card4.actions(card1, 0, players, Deck()) == 0

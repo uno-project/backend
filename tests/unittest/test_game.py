@@ -1,3 +1,4 @@
+from uno.exceptions import UnoRuleException, UnoWinnerException
 from uno.game import Game
 from uno.player import Player
 from uno.cards import NumberedCard, Card
@@ -30,20 +31,20 @@ def test_game_initial():
 def test_game_one_or_ten_players():
     # 1 player: error
     player1 = Player("player1")
-    with pytest.raises(Exception):
+    with pytest.raises(UnoRuleException):
         game = Game(players=[player1])
 
     # 11 players: error
     players = [Player(f"player{i}") for i in range(11)]
-    with pytest.raises(Exception):
-        game = Game(players=[player])
+    with pytest.raises(UnoRuleException):
+        game = Game(players=[players])
 
 
 def test_play_invalid_id():
     global game
     player1 = game.players[0]
 
-    with pytest.raises(Exception):
+    with pytest.raises(UnoRuleException):
         assert game.register_play("INVALID", "INVALID")
 
 def test_play_first_card():
@@ -70,7 +71,7 @@ def test_play_wrong_player():
     player1.addCard(blue)
 
     # play card
-    with pytest.raises(Exception):
+    with pytest.raises(UnoRuleException):
         game.register_play(player1.id, blue.id)
     assert len(game._Game__play_history) == 1
     assert game.playerToPlay == 1
@@ -81,7 +82,7 @@ def test_play_wrong_card():
     player2 = game.players[1]
 
     # play card
-    with pytest.raises(Exception):
+    with pytest.raises(UnoRuleException):
         game.register_play(player2.id, "WRONGID")
     assert len(game._Game__play_history) == 1
     assert game.playerToPlay == 1
@@ -130,7 +131,7 @@ def test_play_player1_winner():
     blue = NumberedCard(color="BLUE", number="1")
     player1.cards = [blue]
 
-    with pytest.raises(Exception):
+    with pytest.raises(UnoWinnerException):
         game.register_play(player1.id, blue.id)
 
     # check penalty

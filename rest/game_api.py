@@ -1,7 +1,8 @@
 from flask_restful import Resource
 from flask import request, jsonify, current_app, g, make_response
-
 from flask_restful.reqparse import RequestParser
+
+from uno.exceptions import UnoWinnerException
 from uno.game import Game
 
 
@@ -77,9 +78,14 @@ class GameApi(Resource):
 
         # try to play card
         try:
-            gameObj.register_play(args.playerId,
-                                  args.cardId,
-                                  args.unoFlag)
+            game.register_play(args.playerId,
+                               args.cardId,
+                               args.unoFlag)
+        # winner
+        except UnoWinnerException as e:
+            return jsonify(message=str(e))
+
         except Exception as e:
             return make_response(jsonify(message=f"Cannot make play: {e}"), 400)
+
         return jsonify(message="success")

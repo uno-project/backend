@@ -68,20 +68,37 @@ def test_play_invalid_player_and_card(server):
                      })
     assert req.status_code == 400
 
-def test_play_valid_player_and_card(server):
+def test_sucessful_play(server):
     gameId = create_game(server)
 
-
-    # get game info
-    #game = 
+    # make user have one card
+    player = server.application.config.games[gameId].players[0]
 
     # play with invalid pla
     req = server.put(f"/game/{gameId}",
                      json={
-                         "playerId": "INVALID_ID",
-                         "cardId": "INVALID_ID"
+                         "playerId": player.id,
+                         "cardId": player.cards[0].id
                      })
-    assert req.status_code == 400
+    assert req.status_code == 200
+    assert req.json["message"] == "success"
+
+def test_winner(server):
+    gameId = create_game(server)
+
+    # make user have one card
+    player = server.application.config.games[gameId].players[0]
+
+    # set one card and play
+    player.cards = player.cards[:1]
+
+    # play with invalid pla
+    req = server.put(f"/game/{gameId}",
+                     json={
+                         "playerId": player.id,
+                         "cardId": player.cards[0].id
+                     })
+    assert req.status_code == 200
 
 
 def create_game(server):
