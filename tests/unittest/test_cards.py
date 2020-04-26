@@ -66,7 +66,6 @@ def test_inverted_actions():
         card3.actions(card4, 1, players, Deck())
 
 
-
 def test_joker_actions():
     player1 = Player("player1")
     player2 = Player("player2")

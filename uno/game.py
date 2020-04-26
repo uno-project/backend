@@ -14,7 +14,8 @@ START_CARDS_HAND = 5
 class Game:
     def __init__(self, players: List[Player]):
         if len(players) < MINIMUM_PLAYERS or len(players) > MAXIMUM_PLAYERS:
-            raise UnoRuleException(f"Game needs at least two players and maximum ten")
+            raise UnoRuleException(
+                f"Game needs at least two players and maximum ten")
 
         logging.getLogger()
         self.id = uuid4().hex
@@ -38,7 +39,8 @@ class Game:
 
         # player is not part of the game: error
         if playerId not in [p.id for p in self.players]:
-            raise UnoRuleException(f"Player {playerId} does not belong to this game")
+            raise UnoRuleException(
+                f"Player {playerId} does not belong to this game")
 
         # player to play
         playerToPlay = self.players[self.playerToPlay]

@@ -1,6 +1,7 @@
 from uuid import uuid4
 from uno.exceptions import UnoRuleException
 
+
 class Card:
     """
     Represents the card in the game

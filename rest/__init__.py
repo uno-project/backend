@@ -1,13 +1,11 @@
 import logging
 
-from flask import Flask, current_app, request, g, jsonify, make_response
+from flask import Flask, current_app, g, jsonify, make_response
 from flask_restful import Api
 from werkzeug.security import safe_str_cmp
 from flask_restful.reqparse import RequestParser
-from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
-    get_jwt_identity
-)
+from flask_jwt_extended import JWTManager, create_access_token
+
 from .game_api import GameApi
 from .player_api import PlayerApi
 
@@ -52,5 +50,7 @@ def login():
 
     # Identity can be any data that is json serializable
     access_token = create_access_token(identity=args.playerId)
-    return jsonify(access_token=access_token), 200
-
+    response = make_response()
+    response.set_cookie(key="access_token",
+                        value=access_token)
+    return response

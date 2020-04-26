@@ -47,6 +47,7 @@ def test_play_invalid_id():
     with pytest.raises(UnoRuleException):
         assert game.register_play("INVALID", "INVALID")
 
+
 def test_play_first_card():
     global game
     player1 = game.players[0]
