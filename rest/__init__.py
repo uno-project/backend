@@ -1,8 +1,8 @@
 import logging
 
 from flask import Flask, current_app, g, jsonify, make_response
+from flask_cors import CORS, cross_origin
 from flask_restful import Api
-from werkzeug.security import safe_str_cmp
 from flask_restful.reqparse import RequestParser
 from flask_jwt_extended import JWTManager, create_access_token
 
@@ -17,6 +17,10 @@ def create_app():
     app.config.logger = logging.getLogger()
     app.config.games = {}
     app.config.players = {}
+
+    # add cors
+    cors = CORS(app,
+                supports_credentials=True)
 
     # add jwt
     app.add_url_rule('/login', 'login', login, methods=["POST"])
