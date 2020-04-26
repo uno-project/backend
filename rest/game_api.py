@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from flask import request, jsonify, current_app, g, make_response
 from flask_restful.reqparse import RequestParser
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from uno.exceptions import UnoWinnerException
 from uno.game import Game
@@ -8,7 +9,7 @@ from uno.game import Game
 
 class GameApi(Resource):
 
-
+    @jwt_required
     def get(self, gameId):
         """
         Returns game information
@@ -22,6 +23,7 @@ class GameApi(Resource):
 
         return make_response(jsonify(game_info))
 
+    @jwt_required
     def post(self):
         """
         Creates a game
@@ -46,17 +48,13 @@ class GameApi(Resource):
         current_app.config.games[game.id] = game
         return jsonify({"gameId": game.id})
 
+    @jwt_required
     def put(self, gameId):
         """
         Play a card
         """
         # parse request
         reqparse = RequestParser()
-        reqparse.add_argument('playerId',
-                              type=str,
-                              location='json',
-                              required=True,
-                              help="Player Id")
         reqparse.add_argument('cardId',
                               type=str,
                               location='json',
@@ -71,6 +69,9 @@ class GameApi(Resource):
 
         args = reqparse.parse_args()
 
+        # player Id
+        playerId = get_jwt_identity()
+
         # search game
         if gameId not in current_app.config.games:
             return make_response(jsonify(message=f"Game {gameId} not found"), 404)
@@ -78,7 +79,7 @@ class GameApi(Resource):
 
         # try to play card
         try:
-            game.register_play(args.playerId,
+            game.register_play(playerId,
                                args.cardId,
                                args.unoFlag)
         # winner

@@ -14,20 +14,16 @@ def server():
     yield server
 
 
-def test_index(server):
+def test_not_logged(server):
     req = server.get("/player/AAAA")
-
-    # GET on / is not implemented
-    assert req.status_code == 404
+    assert req.status_code == 401
 
 
 def test_create_player(server):
-    req = create_player("ASDASDA", server)
-    assert req.status_code == 200
-    assert "playerId" in req.json
+    playerId, token = create_player("ASDASDA", server)
 
     # assert player on GET
-    req = server.get(f"/player/{req.json['playerId']}")
+    req = server.get("/player", headers={"Authorization":f"Bearer {token}"})
     assert req.status_code == 200
     assert req.json["name"] == "ASDASDA"
     assert req.json["cards"] == []
@@ -36,4 +32,15 @@ def test_create_player(server):
 def create_player(name, server):
     # create player with name
     req = server.post("/player", json={"name": name})
-    return req
+    assert req.status_code == 200
+
+    # login
+    playerId = req.json["playerId"]
+    req = server.post("/login", json={"playerId": playerId,
+                                      "playerName": name})
+
+    # get token
+    assert "access_token" in req.json
+    token = req.json["access_token"]
+
+    return playerId, token
