@@ -39,7 +39,6 @@ def create_player(name, server):
     req = server.post("/login",
                       json={
                           "playerId": playerId,
-                          "playerName": name
                       })
 
     # get token

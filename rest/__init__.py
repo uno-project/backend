@@ -44,11 +44,6 @@ def login():
                           location='json',
                           required=True,
                           help="Player Id")
-    reqparse.add_argument('playerName',
-                          type=str,
-                          location='json',
-                          required=True,
-                          help="Player Id")
     args = reqparse.parse_args()
 
 
