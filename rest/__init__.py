@@ -19,11 +19,9 @@ def create_app():
     app.config.players = {}
 
     # add cors
-    cors = CORS(app,
-                supports_credentials=True)
+    cors = CORS(app, supports_credentials=True)
 
     # add jwt
-    app.add_url_rule('/login', 'login', login, methods=["POST"])
     jwt = JWTManager(app)
 
     # add endpoints
@@ -33,23 +31,3 @@ def create_app():
     return app
 
 
-# Provide a method to create access tokens. The create_access_token()
-# function is used to actually generate the token, and you can return
-# it to the caller however you choose.
-def login():
-    # parse request
-    reqparse = RequestParser()
-    reqparse.add_argument('playerId',
-                          type=str,
-                          location='json',
-                          required=True,
-                          help="Player Id")
-    args = reqparse.parse_args()
-
-
-    # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=args.playerId)
-    response = make_response()
-    response.set_cookie(key='access_token',
-                        value=access_token)
-    return response

@@ -1,7 +1,7 @@
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
 from flask import request, jsonify, current_app, make_response
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 
 from uno.player import Player
 
@@ -12,7 +12,8 @@ class PlayerApi(Resource):
         playerId = get_jwt_identity()
 
         # return player info
-        player_info = {"name": current_app.config.players[playerId].name,
+        player_info = {"id": playerId,
+                       "name": current_app.config.players[playerId].name,
                        "cards": [c.reference for c in current_app.config.players[playerId].cards]}
 
         return make_response(jsonify(player_info))
@@ -30,7 +31,8 @@ class PlayerApi(Resource):
         # new player
         new = Player(args.name)
         current_app.config.players[new.id] = new
-        return make_response(jsonify(playerId=new.id))
+        access_token = create_access_token(identity=new.id)
+        return make_response(jsonify(access_token=access_token))
 
 
 

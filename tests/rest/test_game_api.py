@@ -41,9 +41,11 @@ def test_players_cards(server):
 def test_create_game_invalid_players(server):
 
     # add players
-    player, token = create_player("player1", server)
+    token = create_player("player1", server)
     req = server.post(f"/game",
-                      json={"players": [player, "INVALID_ID"]},
+                      json={"players": [server.get("/player",
+                                            headers={"Authorization": f"Bearer {token}"}).json["id"],
+                                        "INVALID_ID"]},
                       headers={"Authorization": f"Bearer {token}"})
 
     # assert game creation
@@ -111,12 +113,15 @@ def test_winner(server):
 
 def create_game(server):
     # add players
-    player1, token1 = create_player("player1", server)
-    player2, token2 = create_player("player2", server)
+    token1 = create_player("player1", server)
+    token2 = create_player("player2", server)
 
     # created succesful
     req = server.post(f"/game",
-                      json={"players": [player1, player2]},
+                      json={"players": [server.get("/player",
+                                            headers={"Authorization": f"Bearer {token1}"}).json["id"],
+                                        server.get("/player",
+                                            headers={"Authorization": f"Bearer {token2}"}).json["id"]]},
                       headers={"Authorization": f"Bearer {token1}"})
     assert req.status_code == 200
 
@@ -125,16 +130,12 @@ def create_game(server):
     req = server.get(f"/game/{gameId}",
                      headers={"Authorization": f"Bearer {token1}"})
 
-    assert player1 in req.json["players"]
-    assert player2 in req.json["players"]
     return {
         "game":
         gameId,
         "players": [{
-            "player": player1,
             "token": token1
         }, {
-            "player": player2,
             "token": token2
         }]
     }
