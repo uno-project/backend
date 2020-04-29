@@ -50,6 +50,6 @@ def login():
     # Identity can be any data that is json serializable
     access_token = create_access_token(identity=args.playerId)
     response = make_response()
-    response.set_cookie(key="access_token",
+    response.set_cookie(key='access_token',
                         value=access_token)
     return response
