@@ -22,7 +22,7 @@ pyparsing==2.4.7
 pytest==5.4.1
 pytest-cov==2.8.1
 pytest-html==2.1.1
-pytest-metadata==1.8.0
+pytest-metadata==1.11.0
 pytz==2020.1
 six==1.14.0
 wcwidth==0.1.9
