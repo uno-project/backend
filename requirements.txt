@@ -1,7 +1,7 @@
 aniso8601==8.0.0
 attrs==19.3.0
 click==7.1.2
-coverage==5.1
+coverage>=5.2.1
 Flask==1.1.2
 Flask-Cors==3.0.8
 Flask-JWT-Extended==3.24.1
@@ -20,7 +20,7 @@ py==1.8.1
 PyJWT==1.7.1
 pyparsing==2.4.7
 pytest==5.4.1
-pytest-cov==2.8.1
+pytest-cov==2.11.1
 pytest-html==2.1.1
 pytest-metadata==1.11.0
 pytz==2020.1
