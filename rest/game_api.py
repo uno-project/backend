@@ -3,7 +3,7 @@ from flask import request, jsonify, current_app, g, make_response
 from flask_restful.reqparse import RequestParser
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from uno.exceptions import UnoWinnerException
+from uno.exceptions import UnoWinnerException, UnoRuleException
 from uno.game import Game
 
 
@@ -44,7 +44,11 @@ class GameApi(Resource):
                 return make_response(jsonify(message=f"Player {player} not found"), 404)
             players.append(current_app.config.players[player])
 
-        game = Game(players)
+        try:
+            game = Game(players)
+        except UnoRuleException as e:
+            return make_response(jsonify(message=str(e)), 400)
+
         current_app.config.games[game.id] = game
         return jsonify({"gameId": game.id})
 
