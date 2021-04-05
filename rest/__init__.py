@@ -9,6 +9,8 @@ from flask_jwt_extended import JWTManager, create_access_token
 from .game_api import GameApi
 from .player_api import PlayerApi
 
+from uno.exceptions import UnoRuleException
+
 def create_app():
     # start config
     app = Flask(__name__)
@@ -17,6 +19,9 @@ def create_app():
     app.config.logger = logging.getLogger()
     app.config.games = {}
     app.config.players = {}
+
+    # handle exceptions
+    app.register_error_handler(UnoRuleException, handle_uno_exception)
 
     # add cors
     cors = CORS(app, supports_credentials=True)
@@ -31,3 +36,5 @@ def create_app():
     return app
 
 
+def handle_uno_exception(e):
+    return make_response(jsonify(message="".join(e.args)), 400)

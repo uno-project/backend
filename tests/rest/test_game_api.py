@@ -38,6 +38,19 @@ def test_players_cards(server):
         assert len(req.json["cards"]) == 5
 
 
+def test_create_game_not_enough_players(server):
+
+    # add players
+    token = create_player("player1", server)
+    req = server.post(f"/game",
+                      json={"players": [server.get("/player",
+                                            headers={"Authorization": f"Bearer {token}"}).json["id"]]},
+                      headers={"Authorization": f"Bearer {token}"})
+
+    # assert game creation
+    assert req.status_code == 400
+    assert req.json["message"] == "Game needs at least two players and maximum ten"
+
 def test_create_game_invalid_players(server):
 
     # add players
