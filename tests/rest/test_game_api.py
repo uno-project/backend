@@ -40,10 +40,13 @@ def test_players_cards(server):
 
 def test_create_game_not_enough_players(server):
 
-    # add players
+    # create game
     token = create_player("player1", server)
-    req = server.post(f"/game",
-                      json={"players": [server.get("/player",
+    gameId = create_only_game(token, server)
+
+    # start game
+    req = server.patch(f"/game/{gameId}",
+                     json={"players": [server.get("/player",
                                             headers={"Authorization": f"Bearer {token}"}).json["id"]]},
                       headers={"Authorization": f"Bearer {token}"})
 
@@ -53,12 +56,15 @@ def test_create_game_not_enough_players(server):
 
 def test_create_game_invalid_players(server):
 
-    # add players
+    # create game
     token = create_player("player1", server)
-    req = server.post(f"/game",
-                      json={"players": [server.get("/player",
+    gameId = create_only_game(token, server)
+
+    # start game
+    req = server.patch(f"/game/{gameId}",
+                     json={"players": [server.get("/player",
                                             headers={"Authorization": f"Bearer {token}"}).json["id"],
-                                        "INVALID_ID"]},
+                                            "INVALID_ID"]},
                       headers={"Authorization": f"Bearer {token}"})
 
     # assert game creation
@@ -124,22 +130,31 @@ def test_winner(server):
     assert req.status_code == 200
 
 
+def create_only_game(token, server):
+    # created succesful
+    req = server.post(f"/game",
+                      headers={"Authorization": f"Bearer {token}"})
+    assert req.status_code == 201
+    return req.json["gameId"]
+
+
 def create_game(server):
     # add players
     token1 = create_player("player1", server)
     token2 = create_player("player2", server)
 
-    # created succesful
-    req = server.post(f"/game",
-                      json={"players": [server.get("/player",
+    gameId = create_only_game(token1, server)
+
+    # start game
+    req = server.patch(f"/game/{gameId}",
+                     json={"players": [server.get("/player",
                                             headers={"Authorization": f"Bearer {token1}"}).json["id"],
                                         server.get("/player",
                                             headers={"Authorization": f"Bearer {token2}"}).json["id"]]},
                       headers={"Authorization": f"Bearer {token1}"})
-    assert req.status_code == 200
+
 
     # get playersId and assert
-    gameId = req.json["gameId"]
     req = server.get(f"/game/{gameId}",
                      headers={"Authorization": f"Bearer {token1}"})
 

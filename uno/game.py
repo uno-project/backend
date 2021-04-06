@@ -12,13 +12,19 @@ START_CARDS_HAND = 5
 
 
 class Game:
-    def __init__(self, players: List[Player]):
+    def __init__(self):
+        logging.getLogger()
+        self.id = uuid4().hex
+        self.players = None
+        self.deck = None
+        self.playerToPlay = None
+        self.__play_history = None
+
+    def start(self, players: List[Player]):
         if len(players) < MINIMUM_PLAYERS or len(players) > MAXIMUM_PLAYERS:
             raise UnoRuleException(
                 f"Game needs at least two players and maximum ten")
 
-        logging.getLogger()
-        self.id = uuid4().hex
         self.players = players
         self.deck = Deck()
         self.deal_card()

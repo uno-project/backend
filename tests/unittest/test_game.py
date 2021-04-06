@@ -17,7 +17,8 @@ def test_game_initial():
 
     # start game
     global game
-    game = Game(players=[player1, player2])
+    game = Game()
+    game.start(players=[player1, player2])
 
     # if game.id is not a UUID, will throw exception
     assert isinstance(UUID(game.id), UUID)
@@ -32,12 +33,14 @@ def test_game_one_or_ten_players():
     # 1 player: error
     player1 = Player("player1")
     with pytest.raises(UnoRuleException):
-        game = Game(players=[player1])
+        game = Game()
+        game.start(players=[player1])
 
     # 11 players: error
     players = [Player(f"player{i}") for i in range(11)]
     with pytest.raises(UnoRuleException):
-        game = Game(players=[players])
+        game = Game()
+        game.start(players=players)
 
 
 def test_play_invalid_id():
