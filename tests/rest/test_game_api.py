@@ -2,6 +2,7 @@ import pytest
 import logging
 
 from unittest.mock import patch, MagicMock
+from http import HTTPStatus
 
 from rest import create_app
 from tests.rest.test_player_api import create_player
@@ -24,7 +25,7 @@ def test_invalid_gameId(server):
     req = server.get("/game/AAAA",
                      headers={"Authorization": f"Bearer {token}"})
 
-    assert req.status_code == 404
+    assert req.status_code == HTTPStatus.NOT_FOUND
 
 
 def test_players_cards(server):
@@ -34,7 +35,7 @@ def test_players_cards(server):
     for player in gameInfo["players"]:
         req = server.get(
             f"/player", headers={"Authorization": f"Bearer {player['token']}"})
-        assert req.status_code == 200
+        assert req.status_code == HTTPStatus.OK
         assert len(req.json["cards"]) == 5
 
 
@@ -68,7 +69,7 @@ def test_create_game_invalid_players(server):
                       headers={"Authorization": f"Bearer {token}"})
 
     # assert game creation
-    assert req.status_code == 404
+    assert req.status_code == HTTPStatus.NOT_FOUND
     assert req.json["message"] == "Player INVALID_ID not found"
 
 
@@ -81,7 +82,7 @@ def test_play_invalid_game(server):
                      json={"cardId": "INVALID_ID"},
                      headers={"Authorization": f"Bearer {token}"})
 
-    assert req.status_code == 404
+    assert req.status_code == HTTPStatus.NOT_FOUND
 
 
 def test_wrong_player(server):
@@ -108,7 +109,7 @@ def test_sucessful_play(server):
     req = server.put(f"/game/{gameId}",
                      json={"cardId": player.cards[0].id},
                      headers={"Authorization": f"Bearer {token}"})
-    assert req.status_code == 200
+    assert req.status_code == HTTPStatus.OK
     assert req.json["message"] == "success"
 
 
@@ -127,14 +128,14 @@ def test_winner(server):
     req = server.put(f"/game/{gameId}",
                      json={"cardId": player.cards[0].id},
                      headers={"Authorization": f"Bearer {token}"})
-    assert req.status_code == 200
+    assert req.status_code == HTTPStatus.OK
 
 
 def create_only_game(token, server):
     # created succesful
     req = server.post(f"/game",
                       headers={"Authorization": f"Bearer {token}"})
-    assert req.status_code == 201
+    assert req.status_code == HTTPStatus.CREATED
     return req.json["gameId"]
 
 
