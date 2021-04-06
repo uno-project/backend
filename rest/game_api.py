@@ -77,7 +77,7 @@ class GameApi(Resource):
             return make_response(jsonify(message=str(e)),  HTTPStatus.BAD_REQUEST)
 
         current_app.config.games[game.id] = game
-        return make_response(jsonify({"gameId": game.id}), HTTPStatus.CREATED)
+        return make_response(jsonify(gameId=game.id), HTTPStatus.CREATED)
 
 
     @jwt_required
