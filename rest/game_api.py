@@ -10,7 +10,8 @@ from uno.game import Game
 
 class GameApi(Resource):
 
-    def _get_game(self, gameId):
+    @staticmethod
+    def get_game(gameId):
         """
         Pick a game from the list
         """
@@ -26,7 +27,7 @@ class GameApi(Resource):
         Returns game information
         """
         # not found, return response
-        game = self._get_game(gameId)
+        game = self.get_game(gameId)
         if isinstance(game, Response):
             return game
 
@@ -37,48 +38,18 @@ class GameApi(Resource):
 
 
     @jwt_required
-    def patch(self, gameId):
-        """
-        Starts a game
-        """
-        # parse request
-        reqparse = RequestParser()
-        reqparse.add_argument('players',
-                              type=list,
-                              location='json',
-                              required=True,
-                              help="List of players")
-        args = reqparse.parse_args()
-
-        # check if players can be found
-        players = []
-        for player in args.players:
-            if player not in current_app.config.players:
-                return make_response(jsonify(message=f"Player {player} not found"), HTTPStatus.NOT_FOUND)
-            players.append(current_app.config.players[player])
-
-        # add players and start
-        game = self._get_game(gameId)
-        try:
-            game.start(players)
-        except UnoRuleException as e:
-            return make_response(jsonify(message=str(e)), HTTPStatus.BAD_REQUEST)
-
-        return 200
-
-    @jwt_required
     def post(self):
         """
         Creates a game
         """
         try:
             game = Game()
+            game.addPlayer(current_app.config.players[get_jwt_identity()])
         except UnoRuleException as e:
             return make_response(jsonify(message=str(e)),  HTTPStatus.BAD_REQUEST)
 
         current_app.config.games[game.id] = game
         return make_response(jsonify(gameId=game.id), HTTPStatus.CREATED)
-
 
     @jwt_required
     def put(self, gameId):

@@ -46,9 +46,7 @@ def test_create_game_not_enough_players(server):
     gameId = create_only_game(token, server)
 
     # start game
-    req = server.patch(f"/game/{gameId}",
-                     json={"players": [server.get("/player",
-                                            headers={"Authorization": f"Bearer {token}"}).json["id"]]},
+    req = server.patch(f"/lobby/{gameId}",
                       headers={"Authorization": f"Bearer {token}"})
 
     # assert game creation
@@ -62,15 +60,11 @@ def test_create_game_invalid_players(server):
     gameId = create_only_game(token, server)
 
     # start game
-    req = server.patch(f"/game/{gameId}",
-                     json={"players": [server.get("/player",
-                                            headers={"Authorization": f"Bearer {token}"}).json["id"],
-                                            "INVALID_ID"]},
-                      headers={"Authorization": f"Bearer {token}"})
+    req = server.post(f"/lobby/{gameId}",
+                      headers={"Authorization": f"Bearer INVALID_TOKEN"})
 
     # assert game creation
-    assert req.status_code == HTTPStatus.NOT_FOUND
-    assert req.json["message"] == "Player INVALID_ID not found"
+    assert req.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 def test_play_invalid_game(server):
@@ -140,20 +134,20 @@ def create_only_game(token, server):
 
 
 def create_game(server):
-    # add players
+    # create players
     token1 = create_player("player1", server)
     token2 = create_player("player2", server)
 
+    # create game
     gameId = create_only_game(token1, server)
 
-    # start game
-    req = server.patch(f"/game/{gameId}",
-                     json={"players": [server.get("/player",
-                                            headers={"Authorization": f"Bearer {token1}"}).json["id"],
-                                        server.get("/player",
-                                            headers={"Authorization": f"Bearer {token2}"}).json["id"]]},
-                      headers={"Authorization": f"Bearer {token1}"})
+    # add player
+    addPlayer(server, gameId, token2)
 
+    # start game
+    req = server.patch(f"/lobby/{gameId}",
+                      headers={"Authorization": f"Bearer {token1}"})
+    assert req.status_code == HTTPStatus.OK
 
     # get playersId and assert
     req = server.get(f"/game/{gameId}",
@@ -168,3 +162,8 @@ def create_game(server):
             "token": token2
         }]
     }
+
+def addPlayer(server, gameId, playerToken):
+    req = server.post(f"/lobby/{gameId}",
+                      headers={"Authorization": f"Bearer {playerToken}"})
+    assert req.status_code == HTTPStatus.OK
