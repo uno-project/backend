@@ -15,17 +15,32 @@ class Game:
     def __init__(self):
         logging.getLogger()
         self.id = uuid4().hex
-        self.players = None
+        self.players = []
         self.deck = None
         self.playerToPlay = None
         self.__play_history = None
+        self.notifications = []
+        self.add_notification("addPlayer")
 
-    def start(self, players: List[Player]):
-        if len(players) < MINIMUM_PLAYERS or len(players) > MAXIMUM_PLAYERS:
+    def add_notification(self, message):
+        a = 'data: '+message+'\n\n'
+        self.notifications.append(a)
+
+    def addPlayer(self, player: Player):
+        # check if player already exists
+        for p in self.players:
+            if player.id == p.id:
+                return True
+
+        self.players.append(player)
+
+        return True
+
+    def start(self):
+        if len(self.players) < MINIMUM_PLAYERS or len(self.players) > MAXIMUM_PLAYERS:
             raise UnoRuleException(
                 f"Game needs at least two players and maximum ten")
 
-        self.players = players
         self.deck = Deck()
         self.deal_card()
         self.playerToPlay = 0
