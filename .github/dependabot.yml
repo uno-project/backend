@@ -1,0 +1,34 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: flask-jwt-extended
+    versions:
+    - ">= 4.1.a, < 4.2"
+  - dependency-name: pyjwt
+    versions:
+    - ">= 2.0.a, < 2.1"
+  - dependency-name: wcwidth
+    versions:
+    - 0.2.5
+  - dependency-name: importlib-metadata
+    versions:
+    - 3.4.0
+    - 3.6.0
+    - 3.7.0
+    - 3.7.2
+    - 3.7.3
+    - 3.9.0
+  - dependency-name: pytest
+    versions:
+    - 6.2.2
+  - dependency-name: packaging
+    versions:
+    - "20.8"
+  - dependency-name: more-itertools
+    versions:
+    - 8.6.0
