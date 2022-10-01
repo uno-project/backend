@@ -1,5 +1,5 @@
 HASH := $(shell git rev-parse --short HEAD)
-CONTAINER := uno/backend
+CONTAINER := eu.gcr.io/uno-project-364221/backend
 SERVICE_NAME=uno
 
 default: test
@@ -21,4 +21,8 @@ api:
 
 build-image:
 	docker build . -t $(CONTAINER):$(HASH)
+
+docker-push:
+	docker tag $(CONTAINER):$(HASH) $(CONTAINER):latest
+	docker push $(CONTAINER):latest
 
