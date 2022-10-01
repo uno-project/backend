@@ -22,5 +22,3 @@ api:
 build-image:
 	docker build . -t $(CONTAINER):$(HASH)
 
-push-keroku:
-	git push heroku master
