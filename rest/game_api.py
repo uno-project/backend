@@ -21,7 +21,7 @@ class GameApi(Resource):
         # return player info
         return current_app.config.games[gameId]
 
-    @jwt_required
+    @jwt_required()
     def get(self, gameId):
         """
         Returns game information
@@ -37,7 +37,7 @@ class GameApi(Resource):
         return make_response(jsonify(game_info))
 
 
-    @jwt_required
+    @jwt_required()
     def post(self):
         """
         Creates a game
@@ -51,7 +51,7 @@ class GameApi(Resource):
         current_app.config.games[game.id] = game
         return make_response(jsonify(gameId=game.id), HTTPStatus.CREATED)
 
-    @jwt_required
+    @jwt_required()
     def put(self, gameId):
         """
         Play a card

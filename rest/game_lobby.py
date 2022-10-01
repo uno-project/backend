@@ -26,7 +26,7 @@ class GameLobby(Resource):
         return Response(event_stream(),
                         mimetype="text/event-stream")
 
-    @jwt_required
+    @jwt_required()
     def post(self, gameId):
         """
         Add a player
@@ -46,7 +46,7 @@ class GameLobby(Resource):
 
         return 200
 
-    @jwt_required
+    @jwt_required()
     def patch(self, gameId):
         """
         Starts a game

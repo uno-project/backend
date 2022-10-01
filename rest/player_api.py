@@ -7,7 +7,7 @@ from uno.player import Player
 
 class PlayerApi(Resource):
 
-    @jwt_required
+    @jwt_required()
     def get(self):
         playerId = get_jwt_identity()
 
