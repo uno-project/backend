@@ -1,6 +1,5 @@
 HASH := $(shell git rev-parse --short HEAD)
 CONTAINER := eu.gcr.io/uno-project-364221/backend
-SERVICE_NAME=uno
 
 default: test
 

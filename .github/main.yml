@@ -38,6 +38,5 @@ jobs:
 
     - name: Build and publish image
       run: |
-        make build-image
         gcloud auth configure-docker
         make push-image
