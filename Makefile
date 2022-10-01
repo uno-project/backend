@@ -22,7 +22,7 @@ api:
 build-image:
 	docker build . -t $(CONTAINER):$(HASH)
 
-docker-push:
+docker-push: build-image
 	docker tag $(CONTAINER):$(HASH) $(CONTAINER):latest
 	docker push $(CONTAINER):latest
 
